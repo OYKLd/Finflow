@@ -46,3 +46,16 @@ finflow/
 ├── composer.json
 ├── README.md
 └── symfony.lock
+
+- **Installer les dépendances nécessaires** :
+  - Doctrine ORM (pour la gestion de la base de données)
+  - Twig (pour le rendu des vues)
+  - Symfony Security Bundle (pour la gestion de l'authentification)
+  - Symfony Form (pour la gestion des formulaires)
+  - Chart.js (pour les graphiques)
+  - SwiftMailer (pour l'envoi d'emails)
+  ```bash
+  composer require symfony/orm-pack symfony/security-bundle symfony/twig-bundle symfony/form symfony/validator symfony/webpack-encore-bundle
+  composer require symfony/swiftmailer-bundle
+  composer require symfony/monolog-bundle
+  composer require symfony/asset
