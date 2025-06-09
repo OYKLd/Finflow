@@ -402,11 +402,11 @@
                             <p>Bon retour sur Finflow pour reprenez le contrôle de vos finances</p>
                         </div>
 
-                        <form id="registrationForm">
+                        <form method="post">
                             <div class="form-group">
                                 <label class="form-label">Email</label>
                                 <div class="position-relative">
-                                    <input type="email" class="form-control" name="email" placeholder="votre@email.com" required>
+                                    <input type="email" class="form-control" name="email" placeholder="votre@email.com" value="{{ last_username }}" required>
                                     <i class="fas fa-envelope input-icon"></i>
                                 </div>
                             </div>
@@ -421,6 +421,10 @@
                                 </div>
                             </div>
 
+                            {% if error %}
+                                <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+                            {% endif %}
+
                             <button type="submit" class="btn btn-primary">
                                 <i class="fas fa-user-plus me-2"></i>
                                 Connexion
@@ -430,7 +434,7 @@
                         <div class="login-link">
                             <p style="color: rgba(255,255,255,0.7);">
                                 Vous n'avez pas de compte ? 
-                                <a href="/login">Inscrivez vous</a>
+                                <a href="/registration">Inscrivez vous</a>
                             </p>
                         </div>
                     </div>
