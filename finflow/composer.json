@@ -21,7 +21,8 @@
         "symfony/security-bundle": "7.3.*",
         "symfony/twig-bundle": "7.3.*",
         "symfony/validator": "7.3.*",
-        "symfony/yaml": "7.3.*"
+        "symfony/yaml": "7.3.*",
+        "twig/twig": "^3.21"
     },
     "require-dev": {
         "symfony/maker-bundle": "^1.63"
