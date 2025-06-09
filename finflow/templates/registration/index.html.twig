@@ -401,35 +401,35 @@
                             <p>Rejoignez Finflow et prenez le contrôle de vos finances</p>
                         </div>
 
-                        <form id="registrationForm">
+                        {{ form_start(registrationForm, {'action': path('app_register'),'method': 'POST','attr': {'id': 'registrationForm'}}) }}
                             <div class="form-group">
-                                <label class="form-label">Prénom</label>
+                                {{ form_label(registrationForm.firstName, null, {'label_attr': {'class': 'form-label'}}) }}
                                 <div class="position-relative">
-                                    <input type="text" class="form-control" name="firstName" placeholder="Votre prénom" required>
+                                    {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Votre prénom'}}) }}
                                     <i class="fas fa-user input-icon"></i>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Nom</label>
+                                {{ form_label(registrationForm.lastName, null, {'label_attr': {'class': 'form-label'}}) }}
                                 <div class="position-relative">
-                                    <input type="text" class="form-control" name="lastName" placeholder="Votre nom" required>
+                                    {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Votre nom'}}) }}
                                     <i class="fas fa-user input-icon"></i>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Email</label>
+                                {{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
                                 <div class="position-relative">
-                                    <input type="email" class="form-control" name="email" placeholder="votre@email.com" required>
+                                    {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'votre@email.com'}}) }}
                                     <i class="fas fa-envelope input-icon"></i>
                                 </div>
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Mot de passe</label>
+                                {{ form_label(registrationForm.plainPassword.first, null, {'label_attr': {'class': 'form-label'}}) }}
                                 <div class="position-relative">
-                                    <input type="password" class="form-control" name="password" id="password" placeholder="Créer un mot de passe" required>
+                                    {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control', 'id': 'password', 'placeholder': 'Créer un mot de passe'}}) }}
                                     <button type="button" class="password-toggle" onclick="togglePassword('password')">
                                         <i class="fas fa-eye" id="passwordIcon"></i>
                                     </button>
@@ -437,9 +437,9 @@
                             </div>
 
                             <div class="form-group">
-                                <label class="form-label">Confirmer le mot de passe</label>
+                                {{ form_label(registrationForm.plainPassword.second, null, {'label_attr': {'class': 'form-label'}}) }}
                                 <div class="position-relative">
-                                    <input type="password" class="form-control" name="confirmPassword" id="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                                    {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control', 'id': 'confirmPassword', 'placeholder': 'Confirmer le mot de passe'}}) }}
                                     <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
                                         <i class="fas fa-eye" id="confirmPasswordIcon"></i>
                                     </button>
@@ -450,7 +450,8 @@
                                 <i class="fas fa-user-plus me-2"></i>
                                 Créer mon compte
                             </button>
-                        </form>
+                        {{ form_end(registrationForm) }}
+
 
                         <div class="login-link">
                             <p style="color: rgba(255,255,255,0.7);">
@@ -482,39 +483,6 @@
                 icon.classList.add('fa-eye');
             }
         }
-
-        // Form validation and submission
-        document.getElementById('registrationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const password = document.getElementById('password').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            if (password !== confirmPassword) {
-                alert('Les mots de passe ne correspondent pas !');
-                return;
-            }
-            
-            if (password.length < 8) {
-                alert('Le mot de passe doit contenir au moins 8 caractères !');
-                return;
-            }
-            
-            // Simulate form submission
-            const submitBtn = document.querySelector('.btn-primary');
-            const originalText = submitBtn.innerHTML;
-            
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Création en cours...';
-            submitBtn.disabled = true;
-            
-            setTimeout(() => {
-                submitBtn.innerHTML = '<i class="fas fa-check me-2"></i>Compte créé !';
-                setTimeout(() => {
-                    alert('Compte créé avec succès ! Redirection vers la page de connexion...');
-                    // window.location.href = '/login';
-                }, 1000);
-            }, 2000);
-        });
 
         // Input animations
         document.querySelectorAll('.form-control').forEach(input => {
