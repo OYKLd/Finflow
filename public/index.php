@@ -337,21 +337,12 @@ session_start();
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <?php if (!isset($_SESSION['user_id'])): ?>
                         <li class="nav-item">
                             <a class="nav-link" href="register.php">Inscription</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="login.php">Connexion</a>
                         </li>
-                    <?php else: ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php">Tableau de bord</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="logout.php">Déconnexion</a>
-                        </li>
-                    <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
                     </li>

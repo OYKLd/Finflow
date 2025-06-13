@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $_POST['password'];
 
     if (login($email, $password)) {
-        header("Location: index.php");
+        header("Location: dashboard.php");
         exit;
     } else {
         $error = "Identifiants invalides!";
