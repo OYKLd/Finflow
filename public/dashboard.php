@@ -117,10 +117,10 @@ foreach ($labels as $month) {
     </div>
 
     <div class="d-flex gap-3">
-        <a href="/transactions/add.php" class="btn btn-success">Ajouter une transaction</a>
-        <a href="/charts.php" class="btn btn-info">Voir les graphiques</a>
-        <a href="/export.php?format=csv" class="btn btn-secondary">Exporter en CSV</a>
-        <a href="/export.php?format=pdf" class="btn btn-secondary">Exporter en PDF</a>
+        <a href="add.php" class="btn btn-success">Ajouter une transaction</a>
+        <a href="charts.php" class="btn btn-info">Voir les graphiques</a>
+        <a href="export.php?format=csv" class="btn btn-secondary">Exporter en CSV</a>
+        <a href="export.php?format=pdf" class="btn btn-secondary">Exporter en PDF</a>
     </div>
 </div>
 
