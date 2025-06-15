@@ -1,8 +1,8 @@
 {
     "require": {
         "php": "^8.1", 
-        "symfony/routing": "^5.0",
-        "symfony/http-foundation": "^5.0",
+        "symfony/routing": "^5.4.48",
+        "symfony/http-foundation": "^5.4.48",
         "dompdf/dompdf": "^3.1"
     }
 }

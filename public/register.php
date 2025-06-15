@@ -452,7 +452,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             <div class="form-group">
                                 <label for="currency" class="form-label">Devise</label>
                                 <div class="position-relative">
-                                    <input type="text" name="currency" id="currency" class="form-control" placeholder="EUR" required>
+                                    <select name="currency" id="currency" class="form-control" required>
+                                        <option value="EUR">EUR (€)</option>
+                                        <option value="USD">USD ($)</option>
+                                        <option value="XOF">XOF (FCFA)</option>
+                                    </select>
                                     <i class="fas fa-coins input-icon"></i>
                                 </div>
                             </div>

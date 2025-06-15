@@ -79,8 +79,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <label for="type" class="form-label">Type</label>
             <select class="form-select" id="type" name="type">
                 <option value="">Sélectionner...</option>
-                <option value="income" <?= $type === 'income' ? 'selected' : '' ?>>Revenu</option>
-                <option value="expense" <?= $type === 'expense' ? 'selected' : '' ?>>Dépense</option>
+                <option value="revenu" <?= $type === 'revenu' ? 'selected' : '' ?>>Revenu</option>
+                <option value="depense" <?= $type === 'depense' ? 'selected' : '' ?>>Dépense</option>
             </select>
         </div>
         <div class="mb-3">
