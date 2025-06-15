@@ -25,8 +25,8 @@ if ($user && isset($user['currency'])) {
 
 // Solde actuel, total revenus et dépenses
 $stmt = $pdo->prepare("SELECT
-    SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income,
-    SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense
+    SUM(CASE WHEN type = 'revenu' THEN amount ELSE 0 END) AS total_income,
+    SUM(CASE WHEN type = 'depense' THEN amount ELSE 0 END) AS total_expense
 FROM transactions WHERE user_id = :user_id");
 $stmt->execute(['user_id' => $userId]);
 $totals = $stmt->fetch();
@@ -63,9 +63,9 @@ foreach ($labels as $month) {
     $expense = 0;
     foreach ($stats as $row) {
         if ($row['month'] === $month) {
-            if ($row['type'] === 'income') {
+            if ($row['type'] === 'revenu') {
                 $income = $row['total'];
-            } elseif ($row['type'] === 'expense') {
+            } elseif ($row['type'] === 'depense') {
                 $expense = $row['total'];
             }
         }
