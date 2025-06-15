@@ -10,9 +10,21 @@ require_once __DIR__ . '/../config/config.php';
 
 $userId = $_SESSION['user_id'];
 
+// Récupérer les informations de l'utilisateur, y compris la devise
+$stmt = $pdo->prepare("SELECT currency FROM users WHERE id = :user_id");
+$stmt->execute(['user_id' => $userId]);
+$user = $stmt->fetch();
+
+// Vérifier si l'utilisateur a été trouvé et si la devise est définie
+if ($user && isset($user['currency'])) {
+    $currency = $user['currency'];
+} else {
+    // Définir une devise par défaut si l'utilisateur n'est pas trouvé ou si la devise n'est pas définie
+    $currency = '€'; // Euro par défaut
+}
 
 // Solde actuel, total revenus et dépenses
-$stmt = $pdo->prepare("SELECT 
+$stmt = $pdo->prepare("SELECT
     SUM(CASE WHEN type = 'income' THEN amount ELSE 0 END) AS total_income,
     SUM(CASE WHEN type = 'expense' THEN amount ELSE 0 END) AS total_expense
 FROM transactions WHERE user_id = :user_id");
@@ -24,7 +36,7 @@ $totalExpense = $totals['total_expense'] ?? 0;
 $balance = $totalIncome - $totalExpense;
 
 // Statistiques pour graphiques
-$stmt = $pdo->prepare("SELECT 
+$stmt = $pdo->prepare("SELECT
     type,
     DATE_FORMAT(date, '%Y-%m') AS month,
     SUM(amount) AS total
@@ -82,7 +94,7 @@ foreach ($labels as $month) {
                 <div class="card-body">
                     <h5 class="card-title">Solde actuel</h5>
                     <p class="card-text fs-4">
-                        €<?= number_format($balance, 2, ',', ' ') ?>
+                        <?= htmlspecialchars($currency) ?> <?= number_format($balance, 2, ',', ' ') ?>
                     </p>
                 </div>
             </div>
@@ -92,7 +104,7 @@ foreach ($labels as $month) {
                 <div class="card-body">
                     <h5 class="card-title">Total revenus</h5>
                     <p class="card-text fs-4">
-                        €<?= number_format($totalIncome, 2, ',', ' ') ?>
+                        <?= htmlspecialchars($currency) ?> <?= number_format($totalIncome, 2, ',', ' ') ?>
                     </p>
                 </div>
             </div>
@@ -102,7 +114,7 @@ foreach ($labels as $month) {
                 <div class="card-body">
                     <h5 class="card-title">Total dépenses</h5>
                     <p class="card-text fs-4">
-                        €<?= number_format($totalExpense, 2, ',', ' ') ?>
+                        <?= htmlspecialchars($currency) ?> <?= number_format($totalExpense, 2, ',', ' ') ?>
                     </p>
                 </div>
             </div>

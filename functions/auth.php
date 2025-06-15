@@ -5,17 +5,22 @@ require_once '../config/config.php';
 function register($email, $password, $name, $currency) {
     global $pdo;
 
-    // Vérification de l'existence de l'utilisateur
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    if ($stmt->fetch()) {
-        return false; // L'utilisateur existe déjà
+    $email = htmlspecialchars($email);
+    $name = htmlspecialchars($name);
+    $currency = htmlspecialchars($currency);
+
+    $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
+
+    $sql = "INSERT INTO users (email, password, name, currency) VALUES (?, ?, ?, ?)";
+    $stmt = $pdo->prepare($sql);
+
+    if ($stmt === false) {
+        error_log("Erreur de préparation de la requête : " . $pdo->errorInfo()[2]);
+        return false;
     }
 
-    // Inscription
-    $hashed_password = password_hash($password, PASSWORD_BCRYPT);
-    $stmt = $pdo->prepare("INSERT INTO users (email, password, name, currency) VALUES (?, ?, ?, ?)");
-    $stmt->execute([$email, $hashed_password, $name, $currency]);
+    $stmt->execute([$email, $hashedPassword, $name, $currency]);
+
     return true;
 }
 
