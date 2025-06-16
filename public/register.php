@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-            color: #ffffff;
+            color: black;
         }
 
         .form-control::placeholder {
@@ -424,9 +424,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <form method="POST">
                             <?php if (!empty($error)) echo "<p style='color:red;'>$error</p>"; ?>
                             <div class="form-group">
-                                <label for="name" class="form-label">Nom</label>
+                                <label for="name" class="form-label">username</label>
                                 <div class="position-relative">
-                                    <input type="text" name="name" id="name" class="form-control" placeholder="Votre nom" required>
+                                    <input type="text" name="name" id="name" class="form-control" placeholder="Votre pseudo" required>
                                     <i class="fas fa-user input-icon"></i>
                                 </div>
                             </div>

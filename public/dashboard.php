@@ -416,6 +416,9 @@ foreach ($labels as $month) {
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.php">Profile</a>
+                    </li>
                 </ul>
             </div>
         </div>

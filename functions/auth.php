@@ -1,41 +1,45 @@
 <?php
-require_once '../config/config.php';
+require_once __DIR__ . '/../config/config.php';
 
-// Fonction d'inscription
 function register($email, $password, $name, $currency) {
     global $pdo;
 
-    $email = htmlspecialchars($email);
-    $name = htmlspecialchars($name);
-    $currency = htmlspecialchars($currency);
-
+    // Hash the password
     $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-    $sql = "INSERT INTO users (email, password, name, currency) VALUES (?, ?, ?, ?)";
-    $stmt = $pdo->prepare($sql);
-
-    if ($stmt === false) {
-        error_log("Erreur de préparation de la requête : " . $pdo->errorInfo()[2]);
+    try {
+        $stmt = $pdo->prepare("INSERT INTO users (email, password, name, currency) VALUES (:email, :password, :name, :currency)");
+        $stmt->execute(['email' => $email, 'password' => $hashedPassword, 'name' => $name, 'currency' => $currency]);
+        return true;
+    } catch (PDOException $e) {
+        error_log($e->getMessage());
         return false;
     }
-
-    $stmt->execute([$email, $hashedPassword, $name, $currency]);
-
-    return true;
 }
 
-// Fonction de connexion
 function login($email, $password) {
     global $pdo;
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
-    $stmt->execute([$email]);
+    $stmt = $pdo->prepare("SELECT id, password FROM users WHERE email = :email");
+    $stmt->execute(['email' => $email]);
     $user = $stmt->fetch();
 
     if ($user && password_verify($password, $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        return true;
+        return $user['id'];
     }
+
     return false;
+}
+
+function isLoggedIn() {
+    return isset($_SESSION['user_id']);
+}
+
+function logout() {
+    session_start();
+    session_unset();
+    session_destroy();
+    header('Location: login.php');
+    exit;
 }
 ?>
