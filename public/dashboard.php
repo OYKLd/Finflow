@@ -427,7 +427,7 @@ foreach ($labels as $month) {
             <div class="row text-center mb-5">
                 <div class="col-12">
                     <br>
-                    <h2 class="display-4 fw-bold mb-4 animate-on-scroll">Aperçu</h2>
+                    <h2 class="display-4 fw-bold mb-4 animate-on-scroll">Tableau de Bord</h2>
                     <p class="lead animate-on-scroll">Visualisez rapidement vos données financières</p>
                 </div>
             </div>
