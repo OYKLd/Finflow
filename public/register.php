@@ -209,7 +209,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             border-color: #667eea;
             outline: none;
             box-shadow: 0 0 20px rgba(102, 126, 234, 0.3);
-            color: black;
+            color: black; 
         }
 
         .form-control::placeholder {
