@@ -15,7 +15,7 @@ $stmt->execute(['user_id' => $userId]);
 $user = $stmt->fetch();
 
 if (!$user) {
-    echo "User not found!";
+    echo "Utilisateur non trouvé.";
     exit;
 }
 
@@ -41,12 +41,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Validate data (add more validation as needed)
         if (empty($newName) || empty($newEmail)) {
-            $error = "Name and email are required.";
+            $error = "Nom et email sont requis.";
         } else {
             // Update user data
             $stmt = $pdo->prepare("UPDATE users SET name = :name, email = :email, currency = :currency WHERE id = :user_id");
             if ($stmt->execute(['name' => $newName, 'email' => $newEmail, 'currency' => $newCurrency, 'user_id' => $userId])) {
-                $success = "Profile updated successfully!";
+                $success = "Profil mis à jour avec succès!";
                 // Refresh user data
                 $stmt = $pdo->prepare("SELECT name, email, currency, avatar FROM users WHERE id = :user_id");
                 $stmt->execute(['user_id' => $userId]);
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $currency = $user['currency'];
                 $avatar = $user['avatar'];
             } else {
-                $error = "Error updating profile.";
+                $error = "Erreur lors de la mise à jour du profil.";
             }
         }
     } elseif (isset($_POST['update_password'])) {
@@ -68,9 +68,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         // Validate passwords
         if (empty($oldPassword) || empty($newPassword) || empty($confirmPassword)) {
-            $error = "All password fields are required.";
+            $error = "Tous les champs de mot de passe sont requis.";
         } elseif ($newPassword !== $confirmPassword) {
-            $error = "New password and confirm password do not match.";
+            $error = "Le nouveau mot de passe et la confirmation du mot de passe ne correspondent pas.";
         } else {
             // Verify old password
             $stmt = $pdo->prepare("SELECT password FROM users WHERE id = :user_id");
@@ -82,12 +82,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
                 $stmt = $pdo->prepare("UPDATE users SET password = :password WHERE id = :user_id");
                 if ($stmt->execute(['password' => $hashedPassword, 'user_id' => $userId])) {
-                    $success = "Password updated successfully!";
+                    $success = "Mot de passe mis à jour avec succès!";
                 } else {
-                    $error = "Error updating password.";
+                    $error = "Erreur lors de la mise à jour du mot de passe.";
                 }
             } else {
-                $error = "Incorrect old password.";
+                $error = "Ancien mot de passe incorrect.";
             }
         }
     } elseif (isset($_POST['delete_account'])) {
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             header("Location: logout.php");
             exit;
         } else {
-            $error = "Error deleting account.";
+            $error = "Erreur lors de la suppression du compte.";
         }
     } elseif (isset($_POST['upload_avatar'])) {
         // Handle avatar upload
@@ -122,7 +122,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         // Update the database with the new avatar path
                         $stmt = $pdo->prepare("UPDATE users SET avatar = :avatar WHERE id = :user_id");
                         if ($stmt->execute(['avatar' => $destFilePath, 'user_id' => $userId])) {
-                            $success = "Avatar updated successfully!";
+                            $success = "Avatar mis à jour avec succès!";
                             // Refresh user data
                             $stmt = $pdo->prepare("SELECT name, email, currency, avatar FROM users WHERE id = :user_id");
                             $stmt->execute(['user_id' => $userId]);
@@ -133,19 +133,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             $currency = $user['currency'];
                             $avatar = $user['avatar'];
                         } else {
-                            $error = "Error updating avatar path in the database.";
+                            $error = "Erreur lors de la mise à jour du chemin de l'avatar dans la base de données.";
                         }
                     } else {
-                        $error = "Error moving the uploaded file.";
+                        $error = "Erreur lors du déplacement du fichier téléchargé.";
                     }
                 } else {
-                    $error = "File size exceeds the limit (2MB).";
+                    $error = "La taille du fichier dépasse la limite (2 Mo).";
                 }
             } else {
-                $error = "Invalid file type. Only JPG, JPEG, and PNG are allowed.";
+                $error = "Type de fichier invalide. Seuls les fichiers JPG, JPEG et PNG sont autorisés.";
             }
         } else {
-            $error = "No file uploaded or upload error.";
+            $error = "Aucun fichier téléchargé ou erreur de téléchargement.";
         }
     }
 }
@@ -221,7 +221,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 </head>
 <body>
     <div class="container">
-        <h2>Profile Settings</h2>
+        <h2>Profile</h2>
         <?php if ($error): ?>
             <div class="error"><?= htmlspecialchars($error) ?></div>
         <?php endif; ?>
@@ -231,7 +231,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php endif; ?>
 
         <!-- Avatar Upload Form -->
-        <h3>Update Avatar</h3>
+        <h3>Avatar</h3>
         <div class="avatar-preview">
             <?php if ($avatar): ?>
                 <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
@@ -242,18 +242,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <form method="POST" enctype="multipart/form-data">
             <input type="hidden" name="upload_avatar">
             <div class="form-group">
-                <label for="avatar">Choose a new avatar:</label>
+                <label for="avatar">Choisir un nouvel avatar:</label>
                 <input type="file" name="avatar" id="avatar">
             </div>
-            <button type="submit">Upload Avatar</button>
+            <button type="submit">Télécharger l'avatar</button>
         </form>
 
         <!-- Profile Update Form -->
-        <h3>Update Profile</h3>
+        <h3>Mettre à jour le profil</h3>
         <form method="POST">
             <input type="hidden" name="update_profile">
             <div class="form-group">
-                <label for="name">Name:</label>
+                <label for="name">Nom:</label>
                 <input type="text" name="name" id="name" value="<?= htmlspecialchars($name) ?>" required>
             </div>
             <div class="form-group">
@@ -261,43 +261,43 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 <input type="email" name="email" id="email" value="<?= htmlspecialchars($email) ?>" required>
             </div>
             <div class="form-group">
-                <label for="currency">Currency:</label>
+                <label for="currency">Devise:</label>
                 <select name="currency" id="currency">
                     <option value="EUR" <?= $currency === 'EUR' ? 'selected' : '' ?>>EUR (€)</option>
                     <option value="USD" <?= $currency === 'USD' ? 'selected' : '' ?>>USD ($)</option>
                     <option value="XOF" <?= $currency === 'XOF' ? 'selected' : '' ?>>XOF (FCFA)</option>
                 </select>
             </div>
-            <button type="submit">Update Profile</button>
+            <button type="submit">Mettre à jour le profil</button>
         </form>
 
         <!-- Password Update Form -->
-        <h3>Update Password</h3>
+        <h3>Mettre à jour le mot de passe</h3>
         <form method="POST">
             <input type="hidden" name="update_password">
             <div class="form-group">
-                <label for="old_password">Old Password:</label>
+                <label for="old_password">Ancien mot de passe:</label>
                 <input type="password" name="old_password" id="old_password" required>
             </div>
             <div class="form-group">
-                <label for="new_password">New Password:</label>
+                <label for="new_password">Nouveau mot de passe:</label>
                 <input type="password" name="new_password" id="new_password" required>
             </div>
             <div class="form-group">
-                <label for="confirm_password">Confirm New Password:</label>
+                <label for="confirm_password">Confirmer le nouveau mot de passe:</label>
                 <input type="password" name="confirm_password" id="confirm_password" required>
             </div>
-            <button type="submit">Update Password</button>
+            <button type="submit">Mettre à jour le mot de passe</button>
         </form>
 
         <!-- Account Deletion Form -->
-        <h3>Delete Account</h3>
+        <h3>Supprimer le compte</h3>
         <form method="POST">
             <input type="hidden" name="delete_account">
-            <p>Are you sure you want to delete your account? This action cannot be undone.</p>
-            <button type="submit" style="background-color: #d9534f;">Delete Account</button>
+            <p>Êtes-vous sûr de vouloir supprimer votre compte? Cette action ne peut pas être annulée.</p>
+            <button type="submit" style="background-color: #d9534f;">Supprimer le compte</button>
         </form>
-        <a href="dashboard.php">Back to Dashboard</a>
+        <a href="dashboard.php">Retour au tableau de bord</a>
     </div>
 </body>
 </html>
