@@ -1,12 +1,10 @@
 <?php
-
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: /login.php');
     exit;
 }
 
-// Corrected path to config.php
 require_once __DIR__ . '/../config/config.php';
 
 $userId = $_SESSION['user_id'];
@@ -21,53 +19,30 @@ if ($user) {
     $avatar = $user['avatar'];
 }
 
-$type = $_POST['type'] ?? '';
-$amount = $_POST['amount'] ?? '';
-$description = $_POST['description'] ?? '';
-$category = $_POST['category'] ?? '';
-$date = $_POST['date'] ?? date('Y-m-d');
+// Fetch user's transactions
+$stmt = $pdo->prepare("SELECT * FROM transactions WHERE user_id = :user_id ORDER BY date DESC");
+$stmt->execute(['user_id' => $userId]);
+$transactions = $stmt->fetchAll();
 
-$errors = [];
+// Récupérer les informations de l'utilisateur, y compris la devise
+$stmt = $pdo->prepare("SELECT currency FROM users WHERE id = :user_id");
+$stmt->execute(['user_id' => $userId]);
+$user = $stmt->fetch();
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (empty($type)) {
-        $errors['type'] = 'Le type est obligatoire.';
-    }
-    if (empty($amount)) {
-        $errors['amount'] = 'Le montant est obligatoire.';
-    } elseif (!is_numeric($amount)) {
-        $errors['amount'] = 'Le montant doit être un nombre.';
-    }
-    if (empty($description)) {
-        $errors['description'] = 'La description est obligatoire.';
-    }
-    if (empty($category)) {
-        $errors['category'] = 'La catégorie est obligatoire.';
-    }
-
-    if (empty($errors)) {
-        $stmt = $pdo->prepare("INSERT INTO transactions (user_id, type, amount, description, category, date) VALUES (:user_id, :type, :amount, :description, :category, :date)");
-        $stmt->execute([
-            'user_id' => $userId,
-            'type' => $type,
-            'amount' => $amount,
-            'description' => $description,
-            'category' => $category,
-            'date' => $date
-        ]);
-
-        header('Location: dashboard.php');
-        exit;
-    }
+// Vérifier si l'utilisateur a été trouvé et si la devise est définie
+if ($user && isset($user['currency'])) {
+    $currency = $user['currency'];
+} else {
+    // Définir une devise par défaut si l'utilisateur n'est pas trouvé ou si la devise n'est pas définie
+    $currency = '€'; // Euro par défaut
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ajouter une transaction</title>
+    <title>Historique des transactions</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
@@ -376,6 +351,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 font-size: 0.9rem;
             }
         }
+        
+        .transaction-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .transaction-table th,
+        .transaction-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .transaction-table th {
+            background-color: rgba(10, 10, 10, 0.9);
+            font-weight: 600;
+        }
+
+        .transaction-table tbody tr:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
     </style>
 </head>
 <body>
@@ -425,8 +422,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="row align-items-center">
                 <div class="col-lg-12 hero-content">
                     <br><br><br>
-                    <h1>Ajouter une transaction</h1>
-                    <p>Enregistrez vos revenus et dépenses.</p>
+                    <h1>Historique des transactions</h1>
+                    <p>Consultez l'historique de vos transactions.</p>
                 </div>
             </div>
         </div>
@@ -436,46 +433,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <section id="features" class="features">
         <div class="container">
             <div class="row justify-content-center">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="feature-card animate-on-scroll">
-                        <?php if (!empty($errors)): ?>
-                            <div class="alert alert-danger">
-                                <ul>
-                                    <?php foreach ($errors as $error): ?>
-                                        <li><?= htmlspecialchars($error) ?></li>
-                                    <?php endforeach; ?>
-                                </ul>
-                            </div>
-                        <?php endif; ?>
-
-                        <form method="post">
-                            <div class="mb-3">
-                                <label for="type" class="form-label">Type</label>
-                                <select class="form-select" id="type" name="type">
-                                    <option value="">Sélectionner...</option>
-                                    <option value="revenu" <?= $type === 'revenu' ? 'selected' : '' ?>>Revenu</option>
-                                    <option value="depense" <?= $type === 'depense' ? 'selected' : '' ?>>Dépense</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="amount" class="form-label">Montant</label>
-                                <input type="number" class="form-control" id="amount" name="amount" value="<?= htmlspecialchars($amount) ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <input type="text" class="form-control" id="description" name="description" value="<?= htmlspecialchars($description) ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="category" class="form-label">Catégorie</label>
-                                <input type="text" class="form-control" id="category" name="category" value="<?= htmlspecialchars($category) ?>">
-                            </div>
-                            <div class="mb-3">
-                                <label for="date" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="date" name="date" value="<?= htmlspecialchars($date) ?>">
-                            </div>
-                            <button type="submit" class="btn btn-primary">Ajouter</button>
-                            <a href="dashboard.php" class="btn btn-secondary">Annuler</a>
-                        </form>
+                        <table class="transaction-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Montant</th>
+                                    <th>Description</th>
+                                    <th>Catégorie</th>
+                                    <th>Date</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($transactions as $transaction): ?>
+                                    <tr>
+                                        <td><?= htmlspecialchars($transaction['type']) ?></td>
+                                        <td><?= htmlspecialchars($currency) ?> <?= htmlspecialchars(number_format($transaction['amount'], 2, ',', ' ')) ?></td>
+                                        <td><?= htmlspecialchars($transaction['description']) ?></td>
+                                        <td><?= htmlspecialchars($transaction['category']) ?></td>
+                                        <td><?= htmlspecialchars($transaction['date']) ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                        <div class="text-center mt-3">
+                            <a href="add.php" class="btn btn-success"><i class="fas fa-plus"></i> Ajouter une transaction</a>
+                        </div>
                     </div>
                 </div>
             </div>

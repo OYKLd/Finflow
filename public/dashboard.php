@@ -10,6 +10,16 @@ require_once __DIR__ . '/../config/config.php';
 
 $userId = $_SESSION['user_id'];
 
+// Fetch user data
+$stmt = $pdo->prepare("SELECT name, avatar FROM users WHERE id = :user_id");
+$stmt->execute(['user_id' => $userId]);
+$user = $stmt->fetch();
+
+if ($user) {
+    $name = $user['name'];
+    $avatar = $user['avatar'];
+}
+
 // Récupérer les informations de l'utilisateur, y compris la devise
 $stmt = $pdo->prepare("SELECT currency FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $userId]);
@@ -417,13 +427,16 @@ foreach ($labels as $month) {
                         <a class="nav-link" href="dashboard.php">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="add.php">Transaction</a>
+                        <a class="nav-link" href="transaction.php">Transaction</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link active" href="profile.php">Profile</a>
+                        <a class="nav-link" href="profile.php">
+                            <img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                            <?= htmlspecialchars($name ?? 'Profile') ?>
+                        </a>
                     </li>
                 </ul>
             </div>
