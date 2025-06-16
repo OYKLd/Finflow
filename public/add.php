@@ -390,7 +390,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="dashboard.php">Tableau de bord</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="add.php">Transaction</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" href="profile.php">Profile</a>
                     </li>
                 </ul>
             </div>
