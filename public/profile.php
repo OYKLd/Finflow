@@ -10,7 +10,7 @@ require_once __DIR__ . '/../config/config.php';
 $userId = $_SESSION['user_id'];
 
 // Fetch user data
-$stmt = $pdo->prepare("SELECT name, email, currency FROM users WHERE id = :user_id");
+$stmt = $pdo->prepare("SELECT name, email, currency, avatar FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $userId]);
 $user = $stmt->fetch();
 
@@ -22,8 +22,15 @@ if (!$user) {
 $name = $user['name'];
 $email = $user['email'];
 $currency = $user['currency'];
+$avatar = $user['avatar']; // Get the avatar path from the database
 $error = '';
 $success = '';
+
+// Define the upload directory
+$uploadDir = 'uploads/'; // Create this directory in your public folder
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0777, true); // Create the directory if it doesn't exist
+}
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['update_profile'])) {
@@ -41,13 +48,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             if ($stmt->execute(['name' => $newName, 'email' => $newEmail, 'currency' => $newCurrency, 'user_id' => $userId])) {
                 $success = "Profile updated successfully!";
                 // Refresh user data
-                $stmt = $pdo->prepare("SELECT name, email, currency FROM users WHERE id = :user_id");
+                $stmt = $pdo->prepare("SELECT name, email, currency, avatar FROM users WHERE id = :user_id");
                 $stmt->execute(['user_id' => $userId]);
                 $user = $stmt->fetch();
 
                 $name = $user['name'];
                 $email = $user['email'];
                 $currency = $user['currency'];
+                $avatar = $user['avatar'];
             } else {
                 $error = "Error updating profile.";
             }
@@ -92,6 +100,52 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             exit;
         } else {
             $error = "Error deleting account.";
+        }
+    } elseif (isset($_POST['upload_avatar'])) {
+        // Handle avatar upload
+        if (isset($_FILES['avatar']) && $_FILES['avatar']['error'] === UPLOAD_ERR_OK) {
+            $fileTmpPath = $_FILES['avatar']['tmp_name'];
+            $fileName = $_FILES['avatar']['name'];
+            $fileSize = $_FILES['avatar']['size'];
+            $fileType = $_FILES['avatar']['type'];
+            $fileNameCmps = explode(".", $fileName);
+            $fileExtension = strtolower(end($fileNameCmps));
+
+            $newFileName = md5(time() . $fileName) . '.' . $fileExtension; // Unique file name
+            $destFilePath = $uploadDir . $newFileName;
+
+            // Validate file type and size
+            $allowedfileTypes = ['jpg', 'png', 'jpeg'];
+            if (in_array($fileExtension, $allowedfileTypes)) {
+                if ($fileSize < 2000000) { // 2MB
+                    if (move_uploaded_file($fileTmpPath, $destFilePath)) {
+                        // Update the database with the new avatar path
+                        $stmt = $pdo->prepare("UPDATE users SET avatar = :avatar WHERE id = :user_id");
+                        if ($stmt->execute(['avatar' => $destFilePath, 'user_id' => $userId])) {
+                            $success = "Avatar updated successfully!";
+                            // Refresh user data
+                            $stmt = $pdo->prepare("SELECT name, email, currency, avatar FROM users WHERE id = :user_id");
+                            $stmt->execute(['user_id' => $userId]);
+                            $user = $stmt->fetch();
+
+                            $name = $user['name'];
+                            $email = $user['email'];
+                            $currency = $user['currency'];
+                            $avatar = $user['avatar'];
+                        } else {
+                            $error = "Error updating avatar path in the database.";
+                        }
+                    } else {
+                        $error = "Error moving the uploaded file.";
+                    }
+                } else {
+                    $error = "File size exceeds the limit (2MB).";
+                }
+            } else {
+                $error = "Invalid file type. Only JPG, JPEG, and PNG are allowed.";
+            }
+        } else {
+            $error = "No file uploaded or upload error.";
         }
     }
 }
@@ -152,6 +206,17 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         .success {
             color: green;
         }
+        .avatar-preview {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+        .avatar-preview img {
+            width: 100%;
+            height: auto;
+        }
     </style>
 </head>
 <body>
@@ -164,6 +229,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <?php if ($success): ?>
             <div class="success"><?= htmlspecialchars($success) ?></div>
         <?php endif; ?>
+
+        <!-- Avatar Upload Form -->
+        <h3>Update Avatar</h3>
+        <div class="avatar-preview">
+            <?php if ($avatar): ?>
+                <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar">
+            <?php else: ?>
+                <img src="https://via.placeholder.com/100" alt="No Avatar">
+            <?php endif; ?>
+        </div>
+        <form method="POST" enctype="multipart/form-data">
+            <input type="hidden" name="upload_avatar">
+            <div class="form-group">
+                <label for="avatar">Choose a new avatar:</label>
+                <input type="file" name="avatar" id="avatar">
+            </div>
+            <button type="submit">Upload Avatar</button>
+        </form>
 
         <!-- Profile Update Form -->
         <h3>Update Profile</h3>
