@@ -564,10 +564,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                         <a class="nav-link" href="dashboard.php">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="transaction.php">Transaction</a>
+                        <a class="nav-link" href="transaction.php">Transactions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="charts.php">Graphiques</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a>
                     </li>
                 </ul>
             </div>

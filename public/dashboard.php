@@ -424,10 +424,10 @@ foreach ($labels as $month) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="dashboard.php">Tableau de bord</a>
+                        <a class="nav-link" href="charts.php">Graphiques</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="transaction.php">Transaction</a>
+                        <a class="nav-link" href="transaction.php">Transactions</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
@@ -437,6 +437,9 @@ foreach ($labels as $month) {
                             <img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
                             <?= htmlspecialchars($name ?? 'Profile') ?>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a>
                     </li>
                 </ul>
             </div>

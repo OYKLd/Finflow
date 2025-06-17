@@ -400,7 +400,7 @@ if ($user && isset($user['currency'])) {
                         <a class="nav-link" href="dashboard.php">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="transaction.php">Transaction</a>
+                        <a class="nav-link" href="charts.php">Graphiques</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
@@ -410,6 +410,9 @@ if ($user && isset($user['currency'])) {
                             <img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
                             <?= htmlspecialchars($name ?? 'Profile') ?>
                         </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a>
                     </li>
                 </ul>
             </div>

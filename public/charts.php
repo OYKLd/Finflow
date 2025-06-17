@@ -387,6 +387,9 @@ echo '</pre>'; // Add this line
                             <?= htmlspecialchars($name ?? 'Profile') ?>
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a>
+                    </li>
                 </ul>
             </div>
         </div>
