@@ -43,7 +43,7 @@ echo '</pre>'; // Add this line
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.2/chart.min.js" integrity="sha512-vUyr+SjghzQc99QjJfn+wJO+Y6j+jmgZ9QrW+H5v+6w+W7g+w5H5W5j5W5j5W5j5W5j5W5j5Ww==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -376,7 +376,7 @@ echo '</pre>'; // Add this line
                         <a class="nav-link" href="dashboard.php">Tableau de bord</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="transaction.php">Transaction</a>
+                        <a class="nav-link" href="transaction.php">Transactions</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="about.php">À propos</a>
@@ -414,7 +414,7 @@ echo '</pre>'; // Add this line
                 <div class="col-md-8">
                     <div class="feature-card animate-on-scroll">
                         <canvas id="expenseChart" height="200"></canvas>
-                        <a href="dashboard.php" class="btn btn-secondary mt-4">Retour au tableau de bord</a>
+                        <a href="dashboard.php" class="btn btn-secondary mt-4">Retour</a>
                     </div>
                 </div>
             </div>
