@@ -544,7 +544,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="hero-section">
             <div class="hero-content">
                 <div class="profile-section">
-                    <img src="1734215257902.jpg" alt="Lydie Ouattara" class="profile-img">
+                    <img src="http://localhost/Finflow/public/1734215257902.jpg" alt="Lydie Ouattara" class="profile-img">
                     <div class="social-icons">
                         <a href="https://www.linkedin.com/in/lydie-ouattara-623710312" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="mailto:lydieouattara828@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
