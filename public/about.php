@@ -1,10 +1,12 @@
 <?php
-require_once __DIR__ . '/../config/config.php'; // Modifiez ce chemin selon votre structure
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
-// Vérifier si l'utilisateur est connecté et récupérer son ID
+require_once __DIR__ . '/../vendor/autoload.php';
+require_once __DIR__ . '/../config/config.php';
+
 session_start();
 $userId = $_SESSION['user_id'] ?? null;
-
 $success = false;
 $error = false;
 
@@ -18,19 +20,34 @@ if ($userId) {
         $avatar = $user['avatar'];
     }
 }
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $nom = trim($_POST['nom'] ?? '');
     $email = trim($_POST['email'] ?? '');
     $avis = trim($_POST['avis'] ?? '');
 
     if ($nom && $email && $avis) {
-        $to = "lydieouattara828@gmail.com"; 
-        $subject = "Nouvel avis utilisateur Finflow";
-        $message = "Nom: $nom\nEmail: $email\nAvis:\n$avis";
-        $headers = "From: $email\r\nReply-To: $email";
-        if (mail($to, $subject, $message, $headers)) {
+        $mail = new PHPMailer(true);
+
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.gmail.com';
+            $mail->SMTPAuth = true;
+            $mail->Username = 'lydieouattara828@gmail.com'; // Remplacez
+            $mail->Password = 'iiua ckvp wfww pbod'; // Utilisez un mot de passe d'application
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('lydieouattara828@gmail.com', 'Finflow Feedback');
+            $mail->addAddress('lydieouattara828@gmail.com');
+            $mail->addReplyTo($email, $nom);
+
+            $mail->Subject = 'Nouvel avis utilisateur Finflow';
+            $mail->Body = "Nom: $nom\nEmail: $email\nAvis:\n$avis";
+
+            $mail->send();
             $success = true;
-        } else {
+        } catch (Exception $e) {
             $error = true;
         }
     } else {
@@ -527,7 +544,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <section class="hero-section">
             <div class="hero-content">
                 <div class="profile-section">
-                    <img src="https://images.unsplash.com/photo-1494790108755-2616b612b47c?w=300&h=300&fit=crop&crop=face" alt="Lydie Ouattara" class="profile-img">
+                    <img src="1734215257902.jpg" alt="Lydie Ouattara" class="profile-img">
                     <div class="social-icons">
                         <a href="https://www.linkedin.com/in/lydie-ouattara-623710312" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
                         <a href="mailto:lydieouattara828@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
@@ -583,6 +600,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <span class="tech-item">HTML5</span>
                 <span class="tech-item">CSS3</span>
                 <span class="tech-item">PHP</span>
+                <span class="tech-item">PHPMAILER</span>
                 <span class="tech-item">MySQL</span>
                 <span class="tech-item">jQuery</span>
                 <span class="tech-item">Chart.js</span>
