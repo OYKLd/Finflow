@@ -1,5 +1,4 @@
 <?php
-
 session_start();
 if (!isset($_SESSION['user_id'])) {
     header('Location: /login.php');
@@ -10,29 +9,21 @@ require_once __DIR__ . '/../config/config.php';
 
 $userId = $_SESSION['user_id'];
 
-// Fetch user data
+// Récupérer les infos utilisateur
 $stmt = $pdo->prepare("SELECT name, avatar FROM users WHERE id = :user_id");
 $stmt->execute(['user_id' => $userId]);
 $user = $stmt->fetch();
 
-if ($user) {
-    $name = $user['name'];
-    $avatar = $user['avatar'];
-}
+$name = $user['name'] ?? 'Profil';
+$avatar = $user['avatar'] ?? 'https://via.placeholder.com/30';
 
-$stmt = $pdo->prepare("SELECT category, SUM(amount) AS total FROM transactions WHERE user_id = :user_id AND type = 'expense' GROUP BY category ORDER BY total DESC");
+// Récupérer les données de dépenses par catégorie
+$stmt = $pdo->prepare("SELECT category, SUM(amount) AS total FROM transactions WHERE user_id = :user_id AND type = 'depense' GROUP BY category ORDER BY total DESC");
 $stmt->execute(['user_id' => $userId]);
 $categoryData = $stmt->fetchAll();
 
 $categories = array_column($categoryData, 'category');
-$totals = array_column($categoryData, 'total');
-
-echo "<script>console.log('categoryData: " . json_encode($categoryData) . "');</script>";
-echo "<script>console.log('Categories: " . json_encode($categories) . "');</script>";
-echo "<script>console.log('Totals: " . json_encode($totals) . "');</script>";
-echo '<pre>'; // Add this line
-print_r($categoryData); // Add this line
-echo '</pre>'; // Add this line
+$totals = array_map('floatval', array_column($categoryData, 'total')); // Assure que ce sont des nombres
 ?>
 <!DOCTYPE html>
 <html lang="fr">
@@ -42,7 +33,6 @@ echo '</pre>'; // Add this line
     <title>FinFlow - Graphiques</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/bootstrap.min.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -303,6 +293,21 @@ echo '</pre>'; // Add this line
             font-weight: 600;
             color: #667eea;
         }
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 20px;
+            padding: 20px 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            margin-bottom: 15px;
+
+            max-width: 500px; 
+            margin-left: auto;
+            margin-right: auto;
+        }
+
 
         /* Footer */
         footer {
@@ -351,175 +356,99 @@ echo '</pre>'; // Add this line
         }
     </style>
 </head>
+        
 <body>
-    <!-- Animated Background -->
-    <div class="animated-bg"></div>
-    <div class="floating-shapes">
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-        <div class="shape"></div>
-    </div>
-
-    <!-- Header -->
-    <nav class="navbar navbar-expand-lg fixed-top">
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark">
         <div class="container">
-            <a class="navbar-brand" href="#">
-                <i class="fas fa-chart-line me-2"></i>Finflow
-            </a>
+            <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Finflow</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="dashboard.php">Tableau de bord</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="transaction.php">Transactions</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="about.php">À propos</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link" href="dashboard.php">Tableau de bord</a></li>
+                    <li class="nav-item"><a class="nav-link" href="transaction.php">Transactions</a></li>
+                    <li class="nav-item"><a class="nav-link" href="about.php">À propos</a></li>
                     <li class="nav-item">
                         <a class="nav-link" href="profile.php">
-                            <img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
-                            <?= htmlspecialchars($name ?? 'Profile') ?>
+                            <img src="<?= htmlspecialchars($avatar) ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                            <?= htmlspecialchars($name) ?>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a>
-                    </li>
+                    <li class="nav-item"><a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a></li>
                 </ul>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="container">
-            <div class="row align-items-center">
-                <div class="col-lg-12 hero-content"><br><br><br>
-                    <h1>Graphiques</h1>
-                    <p>Visualisation de vos dépenses par catégorie.</p>
-                </div>
-            </div>
+    <!-- Hero -->
+    <section class="hero mt-5 pt-5">
+        <div class="container text-center">
+            <h1>Graphiques</h1>
+            <p>Visualisation de vos dépenses par catégorie.</p>
         </div>
     </section>
 
-    <!-- Features Section -->
-    <section id="features" class="features">
+    <!-- Graphique -->
+    <section class="my-5">
         <div class="container">
-            <div class="row justify-content-center">
-                <div class="col-md-8">
-                    <div class="feature-card animate-on-scroll">
-                        <canvas id="expenseChart" height="200"></canvas>
-                        <a href="dashboard.php" class="btn btn-secondary mt-4">Retour</a>
+            <?php if (empty($categoryData)): ?>
+                <div class="alert alert-warning text-center">Aucune donnée de dépenses disponible.</div>
+            <?php else: ?>
+                <div class="card p-4">
+                    <canvas id="expenseChart" height="200"></canvas>
+                    <div class="text-center mt-3">
+                        <a href="dashboard.php" class="btn btn-secondary">Retour</a>
                     </div>
                 </div>
-            </div>
+            <?php endif; ?>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="text-center">
-        <div class="container">
-            <p class="mb-0">&copy; 2025 Finflow - Votre partenaire financier de confiance</p>
-        </div>
+    <footer class="text-center mt-5">
+        <p class="mb-0">&copy; 2025 Finflow - Votre partenaire financier de confiance</p>
     </footer>
 
-    <!-- Scripts -->
+    <!-- JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            });
-        });
+        // Données PHP vers JavaScript
+        const categories = <?= json_encode($categories) ?>;
+        const totals = <?= json_encode($totals) ?>;
 
-        // Animate elements on scroll
-        const observerOptions = {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        };
+        const ctx = document.getElementById('expenseChart')?.getContext('2d');
 
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                }
-            });
-        }, observerOptions);
-
-        document.querySelectorAll('.animate-on-scroll').forEach(el => {
-            observer.observe(el);
-        });
-
-        // Navbar background change on scroll
-        window.addEventListener('scroll', () => {
-            const navbar = document.querySelector('.navbar');
-            if (window.scrollY > 100) {
-                navbar.style.background = 'rgba(10, 10, 10, 0.98)';
-            } else {
-                navbar.style.background = 'rgba(10, 10, 10, 0.95)';
-            }
-        });
-
-        // Add floating animation to hero visual
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes float {
-                0%, 100% { transform: translateY(0px); }
-                50% { transform: translateY(-20px); }
-            }
-        `;
-        document.head.appendChild(style);
-    </script>
-    <script>
-        const ctx = document.getElementById('expenseChart');
-        console.log('Canvas element:', ctx); // Vérifiez si l'élément canvas est trouvé
-
-        if (ctx) {
-            try {
-                const categories = <?= json_encode($categories) ?>;
-                const totals = <?= json_encode($totals) ?>;
-
-                console.log('Categories:', categories); // Affichez les catégories
-                console.log('Totals:', totals); // Affichez les totaux
-
-                new Chart(ctx, {
-                    type: 'doughnut',
-                    data: {
-                        labels: categories,
-                        datasets: [{
-                            data: totals,
-                            backgroundColor: [
-                                '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF', '#FF9F40'
-                            ]
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        plugins: {
-                            legend: {
-                                position: 'top'
-                            }
+        if (ctx && categories.length && totals.length) {
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: totals,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56',
+                            '#4BC0C0', '#9966FF', '#FF9F40',
+                            '#B9FBC0', '#A0C4FF', '#FFD6A5'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        title: {
+                            display: true,
+                            text: 'Répartition des dépenses par catégorie'
                         }
                     }
-                });
-            } catch (error) {
-                console.error('Error creating chart:', error); // Capturez les erreurs lors de la création du graphique
-            }
+                }
+            });
         } else {
-            console.error('Could not find the chart canvas element.');
+            console.warn('Aucune donnée disponible pour afficher le graphique.');
         }
     </script>
 </body>
