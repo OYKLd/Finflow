@@ -405,7 +405,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             <div class="navbar-nav ms-auto">
                 <a class="nav-link" href="index.php">Accueil</a>
                 <a class="nav-link" href="login.php">Connexion</a>
-                <a class="nav-link" href="#">À propos</a>
             </div>
         </div>
     </nav>
