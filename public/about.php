@@ -62,6 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>À propos - Finflow</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -524,18 +525,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="shape"></div>
     </div>
     
-    <nav class="navbar">
-        <div class="nav-container">
-            <a href="#" class="navbar-brand">
-                <i class="fas fa-chart-line"></i>
-                Finflow
-            </a>
-            <ul class="nav-menu">
-                <li><a href="dashboard.php" class="nav-link">Tableau de bord</a></li>
-                <li><a href="charts.php" class="nav-link">Graphiques</a></li>
-                <li><a href="transactions.php" class="nav-link">Transactions</a></li>
-                <li><a href="profile.php"><img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;"><?= htmlspecialchars($name ?? 'Profile') ?></a></li>                <li><button class="btn-logout">Déconnexion</button></li>
-            </ul>
+    <nav class="navbar navbar-expand-lg fixed-top bg-dark navbar-dark">
+        <div class="container">
+            <a class="navbar-brand" href="#"><i class="fas fa-chart-line me-2"></i>Finflow</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item"><a class="nav-link" href="dashboard.php">Tableau de bord</a></li>
+                    <li class="nav-item"><a class="nav-link" href="charts.php">Graphiques</a></li>
+                    <li class="nav-item"><a class="nav-link" href="transactions.php">Transactions</a></li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="profile.php">
+                            <img src="<?= htmlspecialchars($avatar ?? 'https://via.placeholder.com/30') ?>" alt="Avatar" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 5px;">
+                            <?= htmlspecialchars($name ?? 'Profil') ?>
+                        </a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link btn btn-danger" href="logout.php">Déconnexion</a></li>
+                </ul>
+            </div>
         </div>
     </nav>
     
@@ -688,6 +697,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </footer>
     
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
     <script>        
         // Smooth scrolling for navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
